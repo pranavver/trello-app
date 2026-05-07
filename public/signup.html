@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up || Trello</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div style="display: flex; padding: 10px; justify-content: space-between;">
+      <div style="display: flex; padding 10px; justify-content: space-between; flex-direction: column;">
+        <label for="uname">Username</label><input type="text" name="uname" placeholder="Enter username" id="uname">
+        <label for="pwd">Password</label><input type="password" name="pwd" placeholder="Enter password" id="pwd">
+        <button onclick="signup()">
+          signup
+        </button>
+        </div>
+    </div>
+    <script>
+      async function signup(){
+        const uname = document.getElementById("uname");
+        const pwd = document.getElementById("pwd");
+        
+        try{
+          const response =await axios.post("http://localhost:3001/signup",{
+            username: uname.value,
+            password: pwd.value;
+          });
+          // If we get here, the status is 2xx
+          if(response.data.stat === "success"){
+            window.location ='/'
+          }
+        }
+        catch(error){
+          // If the server responds with 400, 404, 500, etc.
+          alert("Unable to sign up, ",response.message);
+        }
+      }
+    </script>
+  </body>
+</html>

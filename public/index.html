@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in || Trello</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div style="display: flex; padding: 10px; justify-content: space-between;">
+      <div style="display: flex; padding 10px; justify-content: space-between; flex-direction: column;">
+        <label for="uname">Username</label><input type="text" name="uname" placeholder="Enter username" id="uname">
+        <label for="pwd">Password</label><input type="password" name="pwd" placeholder="Enter password" id="pwd">
+        <button onclick="signin()">
+          Login
+        </button>
+        </div>
+    </div>
+    <script>
+      async function signin(){
+        const uname = document.getElementById("uname");
+        const pwd = document.getElementById("pwd");
+        
+        try{
+          const response =await axios.post("http://localhost:3001/login",{
+            username: uname.value,
+            password: pwd.value
+          });//if res.status code other then 2xx it will throw an error and blow code will not run
+          if(response.data.stat === "success"){
+            const token = response.data.token;
+            localStorage.setItem("token",token);
+            window.location ='/createorg'
+          }
+        }
+        catch(error){
+          alert("Wrong credientials or user not exist, ",response.message)
+        }
+      }
+    </script>
+  </body>
+</html>

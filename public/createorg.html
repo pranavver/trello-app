@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding || Trello</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div style="display: flex; padding: 10px; justify-content: space-between;">
+      <div style="display: flex; padding 10px; justify-content: space-between; flex-direction: column;">
+        <h2>
+          Create Your First Organization
+        </h2>
+        <label for="oname">Title</label><input type="text" name="oname" placeholder="Enter org name" id="oname">
+        <label for="desc">Description</label><input type="text" name="desc" placeholder="Enter description" id="desc">
+        <button onclick="createorg()">
+          Create Org
+        </button>
+        </div>
+    </div>
+    <script>
+      async function createorg(){
+        
+        const EncodedUserId = localStorage.getItem("token");
+        if(!userId)
+        {
+          alert("You are not logged in")
+          window.location = "/";
+        }
+        const title = document.getElementById("oname").value;
+        const description = document.getElementById("desc").value;
+        
+        try{
+          const response =await axios.post("http://localhost:3001/organization",
+            {// Argument 2: The Data (Body)
+              title,
+              description
+            },
+            {// Argument 3: The Config (Headers)
+              headers: {
+                token: EncodedUserId
+              }
+            }
+          );
+        }
+        catch(error){
+          console.error(response.message);
+        }
+        
+        /*Or use
+        import axios from 'axios';
+          const url = 'https://api.example.com/endpoint';
+          
+          const data = {
+            username: 'coder123',
+            email: 'hello@example.com'
+          };
+          
+          const config = {
+            headers: {
+              'Authorization': 'Bearer your_token_here',
+              'Content-Type': 'application/json'
+            }
+          };
+          
+          axios.post(url, data, config)
+            .then(response => {
+              console.log('Success:', response.data);
+            })
+            .catch(error => {
+              console.error('Error:', error.response ? error.response.data : error.message);
+            });
+            */
+            
+        /*Or use
+        const response = await axios.request({
+            method: 'post',
+            url: 'http://localhost:3001/organization',
+            data: {
+              title,
+              description
+            },
+            headers: {
+              token: userId
+            }
+          });
+          */
+        
+
+        if(response.status >= 200 && response.status < 300){
+          alert("Organization created successfully");
+        }
+        else{
+          alert("Error on backend");
+        }
+      }
+    </script>
+  </body>
+</html>
