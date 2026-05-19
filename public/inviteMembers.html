@@ -3,20 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invite members | Trello</title>
+  <title>Invite Menbers | Trello</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
   <div style="display: flex; padding: 10px; justify-content: space-between;">
-    <div id="sdata" style="display: flex; padding: 10px; justify-content: space-between; flex-direction: column;"></div>
+    <div id="sdata" style="display: flex; padding: 10px; justify-content: space-between; flex-direction: column;">
+    Loading...
+    </div>
     <div style="display: flex; padding: 10px; justify-content: space-between; flex-direction: column;">
-        <label for="user">Enter User Email</label><input type="email" name="user" placeholder="Enter email"/>
-        <label for="user">Enter User Email</label><input type="email" name="user" placeholder="Enter email"/>
+        <label for="org">Enter Organization ID</label><input type="text" name="user" placeholder="Enter Organization ID" id="org"/>
+        <label for="user">Enter Username</label><input type="text" name="user" placeholder="Enter username" id="user"/>
         <button type="button" onclick="addMember()">Invite</button>
     </div>
   </div>
   <script type="text/javascript">
-    const response1 = 
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgIdFromUrl = urlParams.get('OrgId');
+  
+    // 2. Run this when the page loads
+    window.onload = function() {
+      if (orgIdFromUrl) {
+        // Automatically fill the "Enter Organization ID" input
+        document.getElementById("org").value = orgIdFromUrl;
+        // Fetch the data for this specific org
+        getData();
+      }
+    };
+    async function getData(){
+      const EncodedUserId = localStorage.getItem("token");
+        if(!EncodedUserId)
+        {
+          alert("You are not logged in")
+          window.location = "/";
+        }
+        const ele = document.getElementById("sdata");
+        try{
+          const response =await axios.get(`http://localhost:3001/members/?organizationId=${orgIdFromUrl}`,
+            {// Argument 3: The Config (Headers)
+              headers: {
+                token: EncodedUserId
+              }
+            }
+          );
+          const members = response.data.members || [];
+          const membersList = members.map(m => `<li>${m.username} (ID: ${m.id})</li>`).join("");
+      
+          //Update the innerHTML
+          ele.innerHTML = `
+            <ul>
+              ${membersList || "<li>No members yet</li>"}
+            </ul>
+          `;
+        }
+        catch(error){
+          console.error(error.message);
+          ele.innerHTML = "Failed to load organization data.";
+        }
+    }
+    
+     async function addMember(){
+       const EncodedUserId = localStorage.getItem("token");
+        if(!EncodedUserId)
+        {
+          alert("You are not logged in")
+          window.location = "/";
+        }
+        const orgId = document.getElementById("org").value;
+        const username = document.getElementById("user").value;
+        
+        try{
+          const response =await axios.post("http://localhost:3001/add-member-to-org",
+            {// Argument 2: The Data (Body)
+              organizationId: orgId,
+              memberUsername: username
+            },
+            {// Argument 3: The Config (Headers)
+              headers: {
+                token: EncodedUserId
+              }
+            }
+          );
+          
+          if(response.status >= 200 && response.status < 300){
+            alert("Member added successfully");
+            location.reload();
+          }
+        }
+        catch(error){
+          console.error(response.message);
+        }
+      }
   </script>
 </body>
 </html>

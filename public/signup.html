@@ -24,16 +24,19 @@
         try{
           const response =await axios.post("http://localhost:3001/signup",{
             username: uname.value,
-            password: pwd.value;
+            password: pwd.value
           });
           // If we get here, the status is 2xx
-          if(response.data.stat === "success"){
+          if(response.status >= 200 && response.status < 300){
             window.location ='/'
+          }
+          else{
+            alert("Unable to signup");
           }
         }
         catch(error){
           // If the server responds with 400, 404, 500, etc.
-          alert("Unable to sign up, ",response.message);
+          alert("Unable to sign up, ",error.message);
         }
       }
     </script>

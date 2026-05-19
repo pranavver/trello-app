@@ -23,7 +23,7 @@
       async function createorg(){
         
         const EncodedUserId = localStorage.getItem("token");
-        if(!userId)
+        if(!EncodedUserId)
         {
           alert("You are not logged in")
           window.location = "/";
@@ -43,6 +43,12 @@
               }
             }
           );
+          
+          if(response.status >= 200 && response.status < 300){
+            alert("Organization created successfully");
+            const newOrgId = response.data.id; 
+            window.location.href = `/inviteMembers?OrgId=${newOrgId}`;
+          }
         }
         catch(error){
           console.error(response.message);
@@ -87,13 +93,6 @@
           });
           */
         
-
-        if(response.status >= 200 && response.status < 300){
-          alert("Organization created successfully");
-        }
-        else{
-          alert("Error on backend");
-        }
       }
     </script>
   </body>
